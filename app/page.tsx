@@ -6,6 +6,11 @@ import { SecretStuff } from "@/components/SecretStuff";
 
 function HomeContent() {
 
+  assertPrune();
+  console.assert('INLINE_DID_NOT_WORK');
+  if(process.env.NEXT_PUBLIC_INCLUDE_SECRET_STUFF) {  
+    throw new Error('Inline check failed');
+  }
   return (
     <div className={styles.page}>
       <main className={styles.main}>

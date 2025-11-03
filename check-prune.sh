@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Search in .next directory
-if [ ! -d ".next" ]; then
-  echo "ERROR: .next directory not found"
+# Search in .next/static directory (like claude-ai does)
+if [ ! -d ".next/static" ]; then
+  echo "ERROR: .next/static directory not found"
   exit 1
 fi
 
-# Check for __ant_only__ string (exclude cache and source maps)
+# Check for __ant_only__ string (exclude source maps)
 ant_only_found="false"
-if grep -r --exclude-dir=cache --exclude="*.map" "__ant_only__" .next >/dev/null 2>&1; then
+if find .next/static -type f -not -name '*.map' -exec grep -l "__ant_only__" {} \; 2>/dev/null | grep -q .; then
   ant_only_found="true"
 fi
 
