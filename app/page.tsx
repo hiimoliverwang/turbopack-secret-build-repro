@@ -1,7 +1,17 @@
+'use client'
 import Image from "next/image";
 import styles from "./page.module.css";
+import { assertPrune } from "@/lib/assertPrune";
 
 export default function Home() {
+  assertPrune();
+
+  // Inline version to test if pruning works inline
+  if (!process.env.NEXT_PUBLIC_INCLUDE_SECRET_STUFF) {
+    throw new Error('Inline check failed');
+    console.assert('INLINE_DID_NOT_WORK');
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
