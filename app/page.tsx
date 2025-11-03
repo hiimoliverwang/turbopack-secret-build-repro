@@ -2,15 +2,9 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import { assertPrune } from "@/lib/assertPrune";
+import { SecretStuff } from "@/components/SecretStuff";
 
-export default function Home() {
-  assertPrune();
-
-  // Inline version to test if pruning works inline
-  if (!process.env.NEXT_PUBLIC_INCLUDE_SECRET_STUFF) {
-    throw new Error('Inline check failed');
-    console.assert('INLINE_DID_NOT_WORK');
-  }
+function HomeContent() {
 
   return (
     <div className={styles.page}>
@@ -29,6 +23,8 @@ export default function Home() {
           </li>
           <li>Save and see your changes instantly.</li>
         </ol>
+
+        {process.env.NEXT_PUBLIC_INCLUDE_SECRET_STUFF && <SecretStuff />}
 
         <div className={styles.ctas}>
           <a
@@ -100,6 +96,20 @@ export default function Home() {
           Go to nextjs.org →
         </a>
       </footer>
+    </div>
+  );
+}
+
+export default function Home() {
+  if (process.env.NEXT_PUBLIC_INCLUDE_SECRET_STUFF) {
+    return <HomeContent />;
+  }
+
+  return (
+    <div className={styles.page}>
+      <main className={styles.main}>
+        <p>Public version - secret stuff not included</p>
+      </main>
     </div>
   );
 }
