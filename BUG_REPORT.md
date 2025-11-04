@@ -261,11 +261,52 @@ Common use cases:
 
 ---
 
+## SWC Configuration Limitations
+
+We investigated whether SWC could be configured to inline functions (like Terser does), which would make the `assertPrune` function inline into components and get tree-shaken with them.
+
+### What We Tried
+
+**`.swcrc` configuration:**
+```json
+{
+  "jsc": {
+    "minify": {
+      "compress": {
+        "inline": 3
+      }
+    }
+  }
+}
+```
+
+**Result:** ❌ Next.js explicitly ignores `.swcrc` files
+
+From Next.js docs:
+> Next.js does not support custom .swcrc configuration files
+
+### Why This Doesn't Help Anyway
+
+Even if SWC could inline functions, it wouldn't fix the core issue:
+- The problem is that **import statements** from tree-shaken components remain
+- Inlining would just move the code, not eliminate the import
+- The real issue is transitive import elimination, not function inlining
+
+### Conclusion
+
+SWC configuration is:
+1. Not exposed by Next.js 15
+2. Not the right solution anyway (issue is import elimination, not inlining)
+
+The core problem is that Turbopack doesn't eliminate imports from dead code branches.
+
+---
+
 ## Request
 
 Can the Next.js/Turbopack team investigate:
 
-1. Why import statements from tree-shaken components are not eliminated?
-2. Whether fixing #1 would automatically resolve #2 (function definitions)?
+1. **Primary issue**: Why import statements from tree-shaken components are not eliminated?
+2. **Secondary**: Whether fixing #1 would automatically resolve #2 (function definitions)?
 
 This works correctly in Webpack but fails in Turbopack, causing production bundles to include unnecessary code.
